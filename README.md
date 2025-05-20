@@ -21,7 +21,7 @@ Clona el repositorio.
 git clone https://github.com/akaXala/proyectoAyDS.git
 ```
 
-Para el instalar y ejecutar el proyecto usamos **yarn**.
+Para el instalar y ejecutar el proyecto usamos **npm**.
 
 ```bash
 npm install # Descarga las dependencias necesarias del proyecto
