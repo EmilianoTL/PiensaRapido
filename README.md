@@ -1,4 +1,4 @@
-## Verifica version de node y npm
+
 
 # Verify the Node.js version:
 node -v # Should print "v22.15.1".
