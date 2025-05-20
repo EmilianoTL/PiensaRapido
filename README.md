@@ -1,9 +1,15 @@
 
 
 # Verify the Node.js version:
+
+```bash
 node -v # Should print "v22.15.1".
+```
+
 # Verify npm version:
+```bash
 npm -v # Should print "10.9.2".
+```
 
 si no lo tienes instala node :3
 
