@@ -3,12 +3,12 @@
 # Verify the Node.js version:
 
 ```bash
-node -v # Should print "v22.15.1".
+node -v 
 ```
 
 # Verify npm version:
 ```bash
-npm -v # Should print "10.9.2".
+npm -v 
 ```
 
 si no lo tienes instala node :3
@@ -18,7 +18,7 @@ si no lo tienes instala node :3
 Clona el repositorio.
 
 ```bash
-git clone https://github.com/akaXala/proyectoAyDS.git
+git clone https://github.com/EmilianoTL/PiensaRapido.git
 ```
 
 Para el instalar y ejecutar el proyecto usamos **npm**.
