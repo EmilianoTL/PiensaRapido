@@ -9,7 +9,7 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 
-const TABS = ['game', 'progress', 'reward', 'profile', 'setting'];
+const TABS = [ 'profile', 'reward', 'game', 'progress', 'setting'];
 
 export default function TabLayout() {
   return (
