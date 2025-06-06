@@ -15,6 +15,7 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
   const onTabBarLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setDimensions({ width, height });
+  
 
     // ✅ Inicializa la posición del recuadro morado en el tab actual
     tabPositionX.value = withSpring((width / state.routes.length) * state.index);
