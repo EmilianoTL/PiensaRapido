@@ -1,26 +1,42 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'; 
 import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
-import type { Route } from '@react-navigation/native';
 import TabBarButton from '@components/TabBarButton';
 import type { TabRouteName } from '@constants/icons';
 import React, { useState } from 'react';
 import Animated,{ useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import { TabRouter } from '@react-navigation/native';
 
+// Componente personalizado para la barra de pestañas inferior
 export default function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  // Estado para guardar las dimensiones del contenedor de la tab bar
   const [dimensions, setDimensions] = useState({ width: 1, height: 1 }); // evitar división por cero
-  const buttonWidth = dimensions.width / state.routes.length;
+  // Define los tabs que quieres mostrar
+  const allowedTabs = ['index','progress',"reward", 'profile', 'setting']; // Cambia estos por los nombres de tus tabs
 
+  // Filtra solo los tabs permitidos
+  const filteredRoutes = state.routes.filter(route => allowedTabs.includes(route.name));
+
+  // Calcula el ancho de cada botón/tab según los tabs permitidos
+  const buttonWidth = dimensions.width / filteredRoutes.length;
+
+  // Valor animado para la posición X del indicador morado
   const tabPositionX = useSharedValue(0);
 
+  // Maneja el layout de la tab bar para obtener dimensiones y posicionar el indicador
   const onTabBarLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setDimensions({ width, height });
-  
 
-    // ✅ Inicializa la posición del recuadro morado en el tab actual
-    tabPositionX.value = withSpring((width / state.routes.length) * state.index);
+    // Encuentra el índice del tab activo dentro de los filtrados
+    const filteredIndex = filteredRoutes.findIndex(
+      r => r.key === state.routes[state.index].key
+    );
+
+    // Inicializa la posición del recuadro morado en el tab actual filtrado
+    tabPositionX.value = withSpring((width / filteredRoutes.length) * filteredIndex);
   };
 
+  // Estilo animado para mover el indicador morado
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: tabPositionX.value }],
@@ -28,40 +44,50 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
   });
 
   return (
+    // Contenedor principal de la tab bar
     <View onLayout={onTabBarLayout} style={styles.tabBar}>
-      <Animated.View
-        style={[
-          animatedStyle,
-          {
-            position: 'absolute',
-            backgroundColor: '#723FEB',
-            borderRadius: 30,
-            marginHorizontal: 12,
-            height: dimensions.height - 15,
-            width: buttonWidth - 25,
-          },
-        ]}
-      />
-      {state.routes.map((route, index) => {
+      {/* Indicador morado animado que resalta el tab activo */}
+      {state.index >= 0 && state.index < filteredRoutes.length && (
+        <Animated.View
+          style={[
+            animatedStyle,
+            {
+              position: 'absolute',
+              backgroundColor: '#723FEB',
+              borderRadius: 30,
+              marginHorizontal: 12,
+              height: dimensions.height - 15,
+              width: buttonWidth - 25,
+            },
+          ]}
+        />
+      )}
+      {/* Renderiza los botones de cada tab */}
+      {filteredRoutes.map((route, index) => {
         const { options } = descriptors[route.key];
         const rawLabel = options.tabBarLabel ?? options.title ?? route.name;
         const label = typeof rawLabel === 'string' ? rawLabel : route.name;
 
-        const isFocused = state.index === index;
+        // Determina si este tab está enfocado
+        const isFocused = state.index === state.routes.findIndex(r => r.key === route.key);
 
+        // Maneja el evento de presionar el tab
         const onPress = () => {
-          tabPositionX.value = withSpring(buttonWidth * index); // No usar duration aquí
+          // Mueve el indicador morado al tab seleccionado
+          tabPositionX.value = withSpring(buttonWidth * index);
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
 
+          // Navega al tab si no está enfocado
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name, route.params);
           }
         };
 
+        // Maneja el evento de mantener presionado el tab
         const onLongPress = () => {
           navigation.emit({
             type: 'tabLongPress',
@@ -69,6 +95,7 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
           });
         };
 
+        // Renderiza el botón de la tab
         return (
           <TabBarButton
             key={route.key}
@@ -85,7 +112,7 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
   );
 }
 
-
+// Estilos para la tab bar
 const styles = StyleSheet.create({
     tabBar:{
         bottom: 50,
@@ -103,6 +130,5 @@ const styles = StyleSheet.create({
         },
         shadowRadius: 10,
         shadowOpacity: 0.1,
-
     },
 });

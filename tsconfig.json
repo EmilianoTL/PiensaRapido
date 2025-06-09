@@ -6,6 +6,7 @@
     "paths": {
       "@components/*": ["components/*"],
       "@constants/*": ["constants/*"],
+      "@assets/*": ["assets/*"],
     }
     
   }

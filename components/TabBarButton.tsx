@@ -27,7 +27,7 @@ export default function TabBarButton({ onPress, onLongPress, isFocused, routeNam
         return {
             opacity,
         };
-    })
+    });
     const animatedIconStyle = useAnimatedStyle(() => {
         const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2]);
         const top = interpolate(scale.value, [0, 1], [0, 9]);
@@ -35,8 +35,13 @@ export default function TabBarButton({ onPress, onLongPress, isFocused, routeNam
             transform: [{ scale: scaleValue }],
             top,
         };
-    }
-    );
+    });
+
+    // Validación del icono
+    const IconComponent = icon[routeName];
+    const iconElement = typeof IconComponent === 'function'
+        ? IconComponent({ color: isFocused ? '#FFF' : '#222' })
+        : null;
 
     return (
         <Pressable
@@ -45,7 +50,7 @@ export default function TabBarButton({ onPress, onLongPress, isFocused, routeNam
             style={styles.tabBarItem}
         >
             <Animated.View style={[animatedIconStyle]}>
-                 {icon[routeName]({ color: isFocused ? '#FFF' : '#222' })}
+                {iconElement}
             </Animated.View>
             <Animated.Text style={[{ color: isFocused ? '#673ab7' : '#222', fontSize:12}, animatedTextStyle]}>{label}</Animated.Text>
         </Pressable>
