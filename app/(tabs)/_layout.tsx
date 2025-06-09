@@ -1,15 +1,7 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import TabBar from '@components/TabBar';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  interpolateColor,
-} from 'react-native-reanimated';
-import { styleText } from 'util';
 
 const TABS = [ {key:'profile', title:'Perfil',tabBarLabel:'Perfil', headerShown: false}, 
                {key:'reward', title:'Recompensas', tabBarLabel:'Premio', headerShown: false}, 
