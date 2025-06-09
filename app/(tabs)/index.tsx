@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet, Pressable, Animated, ViewStyle, StyleProp, PressableProps } from 'react-native';
 import React, { useRef, ReactNode } from 'react';
+import { Link } from 'expo-router';
 import Screen from '@components/Screen';
+import { Ionicons } from '@expo/vector-icons'; // ← Asegúrate de importar Ionicons
 
 // Constantes para tamaños
 const GRID_BUTTON_SIZE = 160;
@@ -48,23 +50,37 @@ export default function Game() {
     <Screen>
       <View style={styles.container}>
         <View style={styles.grid}>
-          <AnimatedPressable style={styles.gridButton}>
-            <Text style={styles.buttonText}>Memoria</Text>
-          </AnimatedPressable>
-          <AnimatedPressable style={styles.gridButton}>
-            <Text style={styles.buttonText}>Atención</Text>
-          </AnimatedPressable>
-          <AnimatedPressable style={styles.gridButton}>
-            <Text style={styles.buttonText}>Razonamiento{'\n'}Lógico</Text>
-          </AnimatedPressable>
-          <AnimatedPressable style={styles.gridButton}>
-            <Text style={styles.buttonText}>Cálculo{'\n'}Mental</Text>
-          </AnimatedPressable>
+          <Link href="/kindGames/memoria" asChild>
+            <AnimatedPressable style={styles.gridButton}>
+              <Ionicons name="book-outline" size={36} color="#6200ea" style={{ marginBottom: 8 }} />
+              <Text style={styles.buttonText}>Memoria</Text>
+            </AnimatedPressable>
+          </Link>
+          <Link href="/kindGames/atencion" asChild>
+            <AnimatedPressable style={styles.gridButton}>
+              <Ionicons name="eye-outline" size={36} color="#6200ea" style={{ marginBottom: 8 }} />
+              <Text style={styles.buttonText}>Atención</Text>
+            </AnimatedPressable>
+          </Link>
+          <Link href="/kindGames/razonamiento" asChild>
+            <AnimatedPressable style={styles.gridButton}>
+              <Ionicons name="bulb-outline" size={36} color="#6200ea" style={{ marginBottom: 8 }} />
+              <Text style={styles.buttonText}>Razonamiento{'\n'}Lógico</Text>
+            </AnimatedPressable>
+          </Link>
+          <Link href="/kindGames/calculo" asChild>
+            <AnimatedPressable style={styles.gridButton}>
+              <Ionicons name="calculator-outline" size={36} color="#6200ea" style={{ marginBottom: 8 }} />
+              <Text style={styles.buttonText}>Cálculo{'\n'}Mental</Text>
+            </AnimatedPressable>
+          </Link>
         </View>
         <View style={styles.centerCircleWrapper}>
-          <AnimatedPressable style={styles.centerCircle}>
-            <Text style={styles.playButtonText}>Jugar</Text>
-          </AnimatedPressable>
+          <Link href="../(playGame)/play" asChild>
+            <AnimatedPressable style={styles.centerCircle}>
+              <Text style={styles.playButtonText}>Jugar</Text>
+            </AnimatedPressable>
+          </Link>
         </View>
       </View>
     </Screen>
