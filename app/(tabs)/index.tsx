@@ -76,7 +76,7 @@ export default function Game() {
           </Link>
         </View>
         <View style={styles.centerCircleWrapper}>
-          <Link href="../(playGame)/play" asChild>
+          <Link href="../(playGame)/allGames" asChild>
             <AnimatedPressable style={styles.centerCircle}>
               <Text style={styles.playButtonText}>Jugar</Text>
             </AnimatedPressable>

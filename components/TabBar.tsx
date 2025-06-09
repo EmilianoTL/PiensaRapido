@@ -47,19 +47,21 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
     // Contenedor principal de la tab bar
     <View onLayout={onTabBarLayout} style={styles.tabBar}>
       {/* Indicador morado animado que resalta el tab activo */}
-      <Animated.View
-        style={[
-          animatedStyle,
-          {
-            position: 'absolute',
-            backgroundColor: '#723FEB',
-            borderRadius: 30,
-            marginHorizontal: 12,
-            height: dimensions.height - 15,
-            width: buttonWidth - 25,
-          },
-        ]}
-      />
+      {state.index >= 0 && state.index < filteredRoutes.length && (
+        <Animated.View
+          style={[
+            animatedStyle,
+            {
+              position: 'absolute',
+              backgroundColor: '#723FEB',
+              borderRadius: 30,
+              marginHorizontal: 12,
+              height: dimensions.height - 15,
+              width: buttonWidth - 25,
+            },
+          ]}
+        />
+      )}
       {/* Renderiza los botones de cada tab */}
       {filteredRoutes.map((route, index) => {
         const { options } = descriptors[route.key];
