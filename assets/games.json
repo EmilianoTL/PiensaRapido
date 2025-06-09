@@ -1,0 +1,24 @@
+{
+  "memoria": [
+    { "id": 101, "nombre": "Secuencia de luces", "descripcion": "Repite la secuencia de luces que se muestra." },
+    { "id": 102, "nombre": "Secuencia de números", "descripcion": "Repite la secuencia de números que se muestra." },
+    { "id": 103, "nombre": "Secuencia de palabras", "descripcion": "Repite la secuencia de palabras que se muestra." },
+    { "id": 104, "nombre": "Secuencia de colores", "descripcion": "Repite la secuencia de colores que se muestra." },
+    { "id": 105, "nombre": "Secuencia de sonidos", "descripcion": "Repite la secuencia de sonidos que se muestra." },
+    { "id": 106, "nombre": "Secuencia de imágenes", "descripcion": "Repite la secuencia de imágenes que se muestra." },
+    
+    { "id": 199, "nombre": "Proximamente", "descripcion": "Se agregaran más juegos en el futuro." }
+  ],
+  "atencion": [
+    { "id": 201, "nombre": "Busca el objeto", "descripcion": "Encuentra el objeto indicado lo más rápido posible." },
+    { "id": 299, "nombre": "Proximamente", "descripcion": "Se agregaran más juegos en el futuro." }
+  ],
+  "razonamiento": [
+    { "id": 301, "nombre": "Sopa de letras", "descripcion": "Encuentra las palabras ocultas en la sopa de letras." },
+    { "id": 399, "nombre": "Proximamente", "descripcion": "Se agregaran más juegos en el futuro." }
+  ],
+  "calculo": [
+    { "id": 401, "nombre": "¿Número mayor o menor?", "descripcion": "Indica si el número mostrado es mayor o menor que el anterior." },
+    { "id": 499, "nombre": "Proximamente", "descripcion": "Se agregaran más juegos en el futuro." }
+  ]
+}
