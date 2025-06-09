@@ -11,9 +11,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { styleText } from 'util';
 
-const TABS = [ {key:'profile', title:'Perfil',tabBarLabel:'Perfil', headerShown: false}, {key:'home', title:'Inicio', tabBarLabel:'Inicio', headerShown: false}, {key:'leaderboard', title:'Ranking', tabBarLabel:'Ranking'
-}, {key:'reward', title:'Recompensas', tabBarLabel:'Premio', headerShown: false}, {key:'game', title:'Piensa Rapido', tabBarLabel:'Jugar', headerShown: true}, {key:'progress', title:'Progreso', tabBarLabel:'Progreso'
-}, {key:'setting', title:'Configuración', tabBarLabel:'Opciones', headerShown: true} ];
+const TABS = [ {key:'profile', title:'Perfil',tabBarLabel:'Perfil', headerShown: false}, 
+               {key:'reward', title:'Recompensas', tabBarLabel:'Premio', headerShown: false}, 
+               {key:'index', title:'Piensa Rapido', tabBarLabel:'Jugar', headerShown: true}, 
+               {key:'progress', title:'Progreso', tabBarLabel:'Progreso', headerShown: true}, 
+               {key:'setting', title:'Configuración', tabBarLabel:'Opciones', headerShown: true} ];
 
 export default function TabLayout() {
   return (
