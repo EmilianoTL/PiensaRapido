@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
-import { FIREBASE_AUTH } from '../FirebaseConfig';
-import AuthModals from '@components/AuthModals';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import LoginModal from './LoginModal';
+import SignupModal from './SignupModal';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
+import AlertMessage from '../AlertMessage';
 
-export default function AuthButtons() {
+export default function AuthButtons({ setAlertMsg }: { setAlertMsg?: (msg: string) => void }) {
   const [modalType, setModalType] = useState<'login' | 'signup' | null>(null);
+  const [internalAlertMsg, setInternalAlertMsg] = useState('');
 
   // Si el usuario ya está loggeado, no mostrar los botones
   if (FIREBASE_AUTH.currentUser) return null;
 
+  // Renderizar solo los botones y modals aquí
   return (
     <View style={styles.wrapper}>
       <Pressable style={styles.button} onPress={() => setModalType('login')}>
@@ -22,23 +26,25 @@ export default function AuthButtons() {
       </Pressable>
       <Pressable
         style={[styles.button, { backgroundColor: '#4285F4' }]}
-        onPress={() => Alert.alert('Próximamente', 'La autenticación con Google estará disponible en el futuro.')}
+        onPress={() => setInternalAlertMsg('Próximamente. La autenticación con Google estará disponible en el futuro.')}
       >
         <AntDesign name="google" size={22} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Continuar con Google</Text>
       </Pressable>
       <Pressable
         style={[styles.button, { backgroundColor: '#2F2F7A' }]}
-        onPress={() => Alert.alert('Próximamente', 'La autenticación con Microsoft estará disponible en el futuro.')}
+        onPress={() => setInternalAlertMsg('Próximamente. La autenticación con Microsoft estará disponible en el futuro.')}
       >
         <Ionicons name="logo-windows" size={22} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Continuar con Microsoft</Text>
       </Pressable>
-      <AuthModals
-        visible={modalType !== null}
-        onClose={() => setModalType(null)}
-        type={modalType === 'signup' ? 'signup' : 'login'}
-      />
+      {modalType === 'login' && (
+        <LoginModal visible={true} onClose={() => setModalType(null)} />
+      )}
+      {modalType === 'signup' && (
+        <SignupModal visible={true} onClose={() => setModalType(null)} />
+      )}
+      <AlertMessage message={internalAlertMsg} onClose={() => setInternalAlertMsg('')} />
     </View>
   );
 }
@@ -49,6 +55,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 30,
     marginTop: 18,
+    alignSelf: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
   button: {
     flexDirection: 'row',

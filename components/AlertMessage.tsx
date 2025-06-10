@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
 
 interface AlertMessageProps {
   message: string;
@@ -7,49 +7,52 @@ interface AlertMessageProps {
 }
 
 export default function AlertMessage({ message, onClose }: AlertMessageProps) {
-  if (!message) return null;
   return (
-    <View style={styles.alertOverlay}>
-      <View style={styles.alertBox}>
-        <Text style={styles.alertText}>{message}</Text>
-        <Pressable style={styles.alertButton} onPress={onClose}>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cerrar</Text>
-        </Pressable>
+    <Modal visible={!!message} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={styles.alertOverlay}>
+        <View style={styles.alertBox}>
+          <Text style={styles.alertText}>{message}</Text>
+          <Pressable style={styles.alertButton} onPress={onClose}>
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cerrar</Text>
+          </Pressable>
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   alertOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.18)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 100,
+    padding: 24,
   },
   alertBox: {
     backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 24,
-    minWidth: 220,
+    borderRadius: 22,
+    padding: 32,
+    minWidth: 240,
     alignItems: 'center',
-    elevation: 6,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
   alertText: {
     color: '#6200ea',
-    fontSize: 16,
-    marginBottom: 16,
+    fontSize: 17,
+    marginBottom: 18,
     textAlign: 'center',
+    fontWeight: '500',
   },
   alertButton: {
     backgroundColor: '#6200ea',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 24,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 32,
+    marginTop: 4,
   },
 });
