@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Modal, Pressable, TouchableOpacity } from 'react-native';
-import { FIREBASE_AUTH } from '../FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import AlertMessage from './AlertMessage';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import AlertMessage from '../AlertMessage';
 
 function getFriendlyErrorMessage(error: any): string {
   if (!error || !error.code) return 'Ocurrió un error inesperado.';
   switch (error.code) {
-    case 'auth/email-already-in-use':
-      return 'El correo ya está registrado.';
-    case 'auth/invalid-email':
-      return 'El correo no es válido.';
-    case 'auth/weak-password':
-      return 'La contraseña debe tener al menos 6 caracteres.';
     case 'auth/user-not-found':
       return 'No existe una cuenta con ese correo.';
     case 'auth/wrong-password':
@@ -21,18 +15,21 @@ function getFriendlyErrorMessage(error: any): string {
       return 'Demasiados intentos. Intenta más tarde.';
     case 'auth/invalid-credential':
       return 'Credenciales inválidas. Verifica tu correo y contraseña.';
+    case 'auth/invalid-email':
+      return 'El correo no es válido.';
+    case 'auth/missing-password':
+      return 'Falta la contraseña.';
     default:
       return 'Error: ' + (error.message || 'Ocurrió un error inesperado.');
   }
 }
 
-export default function AuthModals({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) {
+export default function LoginModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
 
-  // Limpiar campos cada vez que se abre el modal
   useEffect(() => {
     if (visible) {
       setEmail('');
@@ -41,16 +38,11 @@ export default function AuthModals({ visible, onClose, type }: { visible: boolea
     }
   }, [visible]);
 
-  const handleAuth = async () => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      if (type === 'signup') {
-        await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-        setAlertMsg('Registro exitoso. ¡Bienvenido!');
-      } else {
-        await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
-        setAlertMsg('Login exitoso. ¡Bienvenido de nuevo!');
-      }
+      await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      setAlertMsg('Login exitoso. ¡Bienvenido de nuevo!');
       onClose();
     } catch (error: any) {
       setAlertMsg(getFriendlyErrorMessage(error));
@@ -63,7 +55,7 @@ export default function AuthModals({ visible, onClose, type }: { visible: boolea
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.title}>{type === 'signup' ? 'Crear cuenta' : 'Iniciar sesión'}</Text>
+          <Text style={styles.title}>Iniciar sesión</Text>
           <TextInput
             style={styles.input}
             placeholder="Correo electrónico"
@@ -81,8 +73,8 @@ export default function AuthModals({ visible, onClose, type }: { visible: boolea
             value={password}
             onChangeText={setPassword}
           />
-          <Pressable style={styles.button} onPress={handleAuth} disabled={loading}>
-            <Text style={styles.buttonText}>{loading ? 'Cargando...' : (type === 'signup' ? 'Registrarse' : 'Entrar')}</Text>
+          <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
+            <Text style={styles.buttonText}>{loading ? 'Cargando...' : 'Entrar'}</Text>
           </Pressable>
           <TouchableOpacity onPress={onClose} style={styles.close}>
             <Text style={{ color: '#6200ea', fontWeight: 'bold' }}>Cerrar</Text>

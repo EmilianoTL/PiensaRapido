@@ -1,15 +1,18 @@
-import React from 'react';
-import { Pressable, Text, StyleSheet, Alert } from 'react-native';
-import { FIREBASE_AUTH } from '../FirebaseConfig';
+import React, { useState } from 'react';
+import { Pressable, Text, StyleSheet } from 'react-native';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signOut } from 'firebase/auth';
+import AlertMessage from '../AlertMessage';
 
 export default function SignOutButton() {
+  const [alertMsg, setAlertMsg] = useState('');
+
   const handleSignOut = async () => {
     try {
       await signOut(FIREBASE_AUTH);
-      Alert.alert('Sesión cerrada', 'Has cerrado sesión correctamente.');
+      setAlertMsg('Sesión cerrada. Has cerrado sesión correctamente.');
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      setAlertMsg('Error: ' + (error.message || 'Ocurrió un error al cerrar sesión.'));
     }
   };
 
@@ -17,9 +20,12 @@ export default function SignOutButton() {
   if (!FIREBASE_AUTH.currentUser) return null;
 
   return (
-    <Pressable style={styles.button} onPress={handleSignOut}>
-      <Text style={styles.buttonText}>Cerrar sesión</Text>
-    </Pressable>
+    <>
+      <Pressable style={styles.button} onPress={handleSignOut}>
+        <Text style={styles.buttonText}>Cerrar sesión</Text>
+      </Pressable>
+      <AlertMessage message={alertMsg} onClose={() => setAlertMsg('')} />
+    </>
   );
 }
 
