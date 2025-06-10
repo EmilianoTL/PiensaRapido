@@ -2,8 +2,9 @@ import { View, Text, StyleSheet, Pressable, Modal, TouchableOpacity, FlatList } 
 import { useLocalSearchParams, Link, Stack } from 'expo-router';
 import Screen from '@components/Screen';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import gamesDataJson from '@assets/games.json';
+import GameCard from '@components/GameCard';
 
 const ICONS: Record<string, { name: keyof typeof Ionicons.glyphMap; label: string }> = {
   memoria: { name: 'book-outline', label: 'Memoria' },
@@ -20,11 +21,10 @@ const gamesData = gamesDataJson as Record<GameType, { id: number; nombre: string
 
 export default function KindGamePage() {
   const { IdGame } = useLocalSearchParams();
-  const gameType = (IdGame as GameType) || 'memoria'; // fallback por si acaso
+  const gameType = (IdGame as GameType) || 'memoria';
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGame, setSelectedGame] = useState<{ nombre: string; descripcion: string } | null>(null);
 
-  // Obtén los datos del tipo de juego
   const juegos = gamesData[gameType] || [];
   const iconData = ICONS[gameType];
 
@@ -54,13 +54,9 @@ export default function KindGamePage() {
           />
         )}
       </View>
-      {/* Botón Play debajo del título */}
       <View style={styles.playButtonWrapper}>
         <Link
-          href={{
-            pathname: '/(playGame)/multipleGames',
-            params: { tipo: gameType },
-          }}
+          href={{ pathname: '/(playGame)/multipleGames', params: { tipo: gameType } }}
           asChild
         >
           <Pressable style={styles.playButton}>
@@ -72,37 +68,41 @@ export default function KindGamePage() {
       <FlatList
         data={juegos}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 16, // padding inferior extra
-          paddingTop: 16,
-        }}
-        renderItem={({ item }) => (
-          <Link
-            href={{
-              pathname: '/(playGame)/oneGame',
-              params: { tipo: gameType, id: item.id },
-            }}
-            asChild
-          >
-            <Pressable style={styles.card}>
-              <Text style={styles.cardTitle}>{item.nombre}</Text>
-              <TouchableOpacity
-                style={styles.infoButton}
-                onPress={(e) => {
-                  e.stopPropagation?.(); // Evita que el click abra la carta
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 16 }}
+        renderItem={({ item }) => {
+          const isBlocked = item.id % 100 === 99;
+          return !isBlocked ? (
+            <Link
+              href={{ pathname: '/(playGame)/oneGame', params: { tipo: gameType, id: item.id } }}
+              asChild
+            >
+              <GameCard
+                title={item.nombre}
+                blocked={false}
+                onPress={() => {}}
+                onInfoPress={() => {
                   setSelectedGame({
                     nombre: item.nombre,
                     descripcion: item.descripcion || 'Descripción no disponible.',
                   });
                   setModalVisible(true);
                 }}
-              >
-                <Ionicons name="help-circle-outline" size={28} color="#6200ea" />
-              </TouchableOpacity>
-            </Pressable>
-          </Link>
-        )}
+              />
+            </Link>
+          ) : (
+            <GameCard
+              title={item.nombre}
+              blocked={true}
+              onInfoPress={() => {
+                setSelectedGame({
+                  nombre: item.nombre,
+                  descripcion: item.descripcion || 'Descripción no disponible.',
+                });
+                setModalVisible(true);
+              }}
+            />
+          );
+        }}
       />
       <Modal
         visible={modalVisible}
@@ -159,30 +159,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     letterSpacing: 1,
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#e0d7f8',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 16,
-    justifyContent: 'space-between',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-  cardTitle: {
-    fontSize: 18,
-    color: '#3e2d6b',
-    fontWeight: '600',
-    flex: 1,
-  },
-  infoButton: {
-    marginLeft: 16,
-    padding: 4,
   },
   modalOverlay: {
     flex: 1,
