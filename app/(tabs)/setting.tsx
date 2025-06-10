@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Screen from '@components/Screen';
-import SignOutButton from '@components/SignOutButton'; // Asegúrate de que la ruta sea correcta
+import SignOutButton from '@components/Auth/SignOutButton'; // Asegúrate de que la ruta sea correcta
 
 export default function Setting() {
   return (
