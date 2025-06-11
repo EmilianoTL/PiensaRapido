@@ -1,7 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import CalculoM from './calculom';
 
 export default function OneGamePage() {
+  const { tipo, id } = useLocalSearchParams();
+
+  if (tipo === 'calculo' && id === '401') {
+    return <CalculoM />;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Minijuego</Text>
