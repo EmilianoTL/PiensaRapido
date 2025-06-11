@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { View, StyleSheet, Pressable, Animated } from 'react-native';
 
-const COLORS = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f']; // Rojo, Verde, Azul, Amarillo
+const COLORS = {
+  red: { base: '#e74c3c', shadow: '#c0392b' },
+  green: { base: '#2ecc71', shadow: '#27ae60' },
+  blue: { base: '#3498db', shadow: '#2980b9' },
+  yellow: { base: '#f1c40f', shadow: '#f39c12' },
+};
+const COLOR_KEYS = ['red', 'green', 'blue', 'yellow'];
 
 type GameState = 'idle' | 'showing' | 'playing' | 'gameOver';
 
-interface SimonSaysProps {
+interface LightSequenceProps {
   isPaused: boolean;
-  gameState: GameState; // Recibe el estado del padre
+  gameState: GameState;
   onScoreChange: (newScore: number) => void;
   onStateChange: (newState: GameState) => void;
 }
 
-const SimonSays = forwardRef((props: SimonSaysProps, ref) => {
+const LightSequence = forwardRef((props: LightSequenceProps, ref) => {
   const { isPaused, gameState, onScoreChange, onStateChange } = props;
 
   const [sequence, setSequence] = useState<number[]>([]);
@@ -43,8 +49,7 @@ const SimonSays = forwardRef((props: SimonSaysProps, ref) => {
     }, 700);
     return () => clearInterval(intervalId);
   }, [isPaused, onStateChange]);
-  
-  // Este efecto ahora reacciona a los cambios de estado del padre
+
   useEffect(() => {
     if (isPaused) return;
 
@@ -53,19 +58,19 @@ const SimonSays = forwardRef((props: SimonSaysProps, ref) => {
       setScore(0);
       setSequence([]);
       setPlayerSequence([]);
-      setTimeout(() => onStateChange('showing'), 500);
+      setTimeout(() => {
+        onStateChange('showing');
+      }, 800);
     } else if (gameState === 'showing') {
-      const newColorIndex = Math.floor(Math.random() * COLORS.length);
-      const newSequence = [...sequence, newColorIndex];
-      setSequence(newSequence);
-      setPlayerSequence([]);
-      showSequence(newSequence);
+        const newColorIndex = Math.floor(Math.random() * COLOR_KEYS.length);
+        const newSequence = [...sequence, newColorIndex];
+        setSequence(newSequence);
+        setPlayerSequence([]);
+        showSequence(newSequence);
     }
   }, [gameState, isPaused]);
 
-
   const handlePlayerPress = (index: number) => {
-    // CAMBIO CLAVE: La guarda ahora usa el `gameState` del padre
     if (gameState !== 'playing' || isPaused) return;
 
     const newPlayerSequence = [...playerSequence, index];
@@ -80,27 +85,34 @@ const SimonSays = forwardRef((props: SimonSaysProps, ref) => {
       const newScore = score + 1;
       setScore(newScore);
       onScoreChange(newScore);
-      onStateChange('showing'); // Notifica al padre que empiece la siguiente ronda
+      onStateChange('showing');
     }
   };
 
   return (
     <View style={styles.gameBoard}>
-      {COLORS.map((color, index) => (
-        <Animated.View key={index} style={styles.buttonWrapper}>
-          <Pressable
-            // CAMBIO CLAVE: El botón se deshabilita si no es el turno del jugador
-            disabled={gameState !== 'playing'}
-            onPress={() => handlePlayerPress(index)}
-            style={({ pressed }) => [
-              styles.gameButton,
-              { backgroundColor: color },
-              activeButton === index && styles.activeButton,
-              (pressed && gameState === 'playing') && styles.pressedButton,
-            ]}
-          />
-        </Animated.View>
-      ))}
+      {COLOR_KEYS.map((key, index) => {
+        const color = COLORS[key as keyof typeof COLORS];
+        const isActive = activeButton === index;
+        return (
+          <View key={index} style={styles.buttonWrapper}>
+            <Pressable
+              disabled={gameState !== 'playing'}
+              onPress={() => handlePlayerPress(index)}
+              style={({ pressed }) => [
+                styles.gameButton,
+                { 
+                  backgroundColor: color.base,
+                  borderColor: color.shadow,
+                  opacity: isActive || (pressed && gameState === 'playing') ? 1 : 0.6,
+                },
+                isActive && styles.activeButton,
+                pressed && gameState === 'playing' && styles.pressedButton,
+              ]}
+            />
+          </View>
+        );
+      })}
     </View>
   );
 });
@@ -123,21 +135,25 @@ const styles = StyleSheet.create({
   gameButton: {
     flex: 1,
     borderRadius: 30,
-    elevation: 8,
+    borderBottomWidth: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 5,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 8,
+    elevation: 8,
   },
   activeButton: {
-    opacity: 1,
     transform: [{ scale: 1.05 }],
+    opacity: 1,
     shadowColor: '#fff',
     shadowRadius: 15,
+    elevation: 16,
   },
   pressedButton: {
-    opacity: 0.6,
+    transform: [{ translateY: 2 }],
+    borderBottomWidth: 4,
+    elevation: 2,
   }
 });
 
-export default SimonSays;
+export default LightSequence;

@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal, Animated } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import Screen from '@components/Screen';
-import SimonSaysGame from '@components/Games/SimonSays';
+import LightSequenceGame from '@components/Games/LightSequence';
 import { Ionicons } from '@expo/vector-icons';
 
 // Mapeo de IDs a componentes de juego
 const GAME_COMPONENTS: Record<string, React.ElementType> = {
-  '103': SimonSaysGame,
+  '101': LightSequenceGame,
   // Aquí agregarás otros juegos en el futuro
 };
 
