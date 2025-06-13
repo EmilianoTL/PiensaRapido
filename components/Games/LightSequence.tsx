@@ -167,7 +167,9 @@ const LightSequence = forwardRef((props: LightSequenceProps, ref) => {
   // Renderiza el tablero, pero si isPaused, deshabilita todos los botones
   return (
     <View style={styles.gameBoard}>
-      <Text style={styles.statusTextEnhanced}>{statusText}</Text>
+      <View style={styles.statusContainer}>
+        <Text style={styles.statusTextEnhanced}>{statusText}</Text>
+      </View>
       {COLOR_KEYS.map((key, index) => {
         const color = COLORS[key as keyof typeof COLORS];
         const isActive = activeButton === index;
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
     maxWidth: 400,
+    position: 'relative',
   },
   buttonWrapper: {
     width: '45%',
@@ -231,21 +234,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     elevation: 2,
   },
-  statusTextEnhanced: {
+  statusContainer: {
     position: 'absolute',
-    top: -100,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 10,
+    top: -80,
+    alignSelf: 'center',
+    backgroundColor: '#6200ea',
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    elevation: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 4,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+  },
+  statusTextEnhanced: {
+    fontFamily: 'RobotoSlab_700Bold',
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
   },
 });
 

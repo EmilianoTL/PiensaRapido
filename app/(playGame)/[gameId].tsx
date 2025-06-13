@@ -134,6 +134,13 @@ export default function GamePlayerPage() {
               <Ionicons name="play" size={24} color="#fff" />
               <Text style={styles.modalButtonText}>Reanudar</Text>
             </Pressable>
+            <Pressable style={styles.modalButton} onPress={() => {
+              setIsPaused(false);
+              gameRef.current?.restart();
+            }}>
+              <Ionicons name="refresh" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Reiniciar</Text>
+            </Pressable>
             <Pressable style={[styles.modalButton, styles.quitButton]} onPress={() => router.back()}>
               <Ionicons name="exit-outline" size={24} color="#fff" />
               <Text style={styles.modalButtonText}>Salir</Text>
