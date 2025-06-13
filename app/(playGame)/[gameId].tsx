@@ -1,140 +1,119 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Modal, Animated } from 'react-native';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import Screen from '@components/Screen';
 import LightSequenceGame from '@components/Games/LightSequence';
+import TimerBar from '@components/TimeBar';
 import { Ionicons } from '@expo/vector-icons';
 
-// Mapeo de IDs a componentes de juego
+// --- Game Component Mapping ---
 const GAME_COMPONENTS: Record<string, React.ElementType> = {
   '101': LightSequenceGame,
-  // Aquí agregarás otros juegos en el futuro
+  // Future games will be added here
 };
 
-type GameState = 'idle' | 'showing' | 'playing' | 'gameOver';
 
+// --- Main Component ---
 export default function GamePlayerPage() {
+  // --- Hooks ---
   const router = useRouter();
   const { gameId, mode = 'oneGame' } = useLocalSearchParams<{ gameId: string; mode: 'oneGame' | 'multipleGames' | 'allGames' }>();
+  const gameRef = useRef<{ restart: () => void; forceGameOver: () => void }>(null);
 
+  // --- State Management ---
   const [score, setScore] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [statusText, setStatusText] = useState('');
-  const [currentGameState, setCurrentGameState] = useState<GameState>('idle');
-  const gameRef = useRef<{ restart: () => void }>(null);
+  const [timerPaused, setTimerPaused] = useState(true);
+  const [timerKey, setTimerKey] = useState(0);
 
-  const timerAnimation = useRef(new Animated.Value(1)).current;
-  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
-
+  // --- Dynamic Game Component ---
   const GameComponent = gameId ? GAME_COMPONENTS[gameId] : null;
 
-  // Efecto que controla el temporizador y los textos basado en el estado del juego
-  useEffect(() => {
-    if (isPaused || isGameOver) {
-      animationRef.current?.stop();
-      return;
-    }
 
-    switch (currentGameState) {
-      case 'showing':
-        setStatusText('Observa...');
-        animationRef.current?.stop();
-        timerAnimation.setValue(1);
-        break;
-      
-      case 'playing':
-        setStatusText('¡Tu Turno!');
-        const timeForLevel = Math.max(5000 - (score * 200), 1500);
-        timerAnimation.setValue(1);
-        
-        animationRef.current = Animated.timing(timerAnimation, {
-          toValue: 0,
-          duration: timeForLevel,
-          useNativeDriver: false,
-        });
-        
-        animationRef.current.start(({ finished }) => {
-          if (finished && !isPaused && !isGameOver) {
-            setCurrentGameState('gameOver');
-          }
-        });
-        break;
-      
-      case 'gameOver':
-        setStatusText('¡Fin del juego!');
-        animationRef.current?.stop();
-        setIsGameOver(true);
-        break;
-
-      case 'idle':
-      default:
-        setStatusText('');
-        animationRef.current?.stop();
-        timerAnimation.setValue(1);
-        break;
-    }
-    
-    return () => {
-        animationRef.current?.stop();
-    };
-
-  }, [currentGameState, isPaused, isGameOver, score]);
-  
-  const handleFinalAction = () => {
+  // --- Callbacks and Event Handlers ---
+  const handleFinalAction = useCallback(() => {
     setIsGameOver(false);
     if (mode !== 'oneGame') {
       router.back();
     } else {
       gameRef.current?.restart();
     }
-  };
+  }, [mode, router]);
 
-  const handleExit = () => {
+  const handleExit = useCallback(() => {
     setIsGameOver(false);
     router.back();
-  };
+  }, [router]);
 
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+  }, []);
+
+  const handlePause = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+  
+  // Cuando el usuario pierde (por error en la secuencia)
+  const handleGameOver = useCallback(() => {
+    setIsGameOver(true);
+  }, []);
+
+  // --- TimerBar handlers ---
+  const handleStartTimer = useCallback(() => {
+    setTimerPaused(false);
+  }, []);
+  const handlePauseTimer = useCallback(() => {
+    setTimerPaused(true);
+  }, []);
+  const handleResetTimer = useCallback(() => {
+    setTimerKey(prev => prev + 1);
+    setTimerPaused(true);
+  }, []);
+
+  // --- TimeOut handler ---
+  const handleTimeOut = useCallback(() => {
+    gameRef.current?.forceGameOver();
+  }, []);
+
+  // Al iniciar la partida, la barra debe aparecer llena y pausada
+  useEffect(() => {
+    setTimerKey(0); // Reinicia la barra
+    setTimerPaused(true); // Pausada y llena
+  }, []);
+
+
+  // --- Render Logic ---
   return (
     <Screen>
       <Stack.Screen options={{ headerShown: false }} />
-
-      {/* Barra de tiempo centrada y en la parte superior */}
-      <View style={styles.timerWrapper}>
-        <View style={styles.timerContainer}>
-          <Animated.View style={[styles.timerBar, {
-            width: timerAnimation.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0%', '100%'],
-            })
-          }]} />
-        </View>
-      </View>
-
-      {/* Barra superior sin botón de retorno */}
+      {/* Top Bar */}
       <View style={styles.topBarNoBack}>
         <View style={styles.scoreContainer}>
           <Ionicons name="star" size={24} color="#FDD835" />
           <Text style={styles.scoreText}>{score}</Text>
         </View>
-        <Pressable onPress={() => setIsPaused(true)} style={styles.iconButton}>
+        <Pressable onPress={handlePause} style={styles.iconButton}>
           <Ionicons name="pause" size={32} color="#3e2d6b" />
         </Pressable>
       </View>
-
-      {/* Texto de estado mejorado */}
+      {/* Status Text */}
       <View style={styles.statusContainer}>
         <Text style={styles.statusTextEnhanced}>{statusText}</Text>
       </View>
-
+      {/* Game Area */}
       <View style={styles.gameArea}>
         {GameComponent ? (
           <GameComponent
             ref={gameRef}
             isPaused={isPaused || isGameOver}
-            gameState={currentGameState}
             onScoreChange={setScore}
-            onStateChange={setCurrentGameState}
+            setStatusText={setStatusText}
+            onGameOver={handleGameOver}
+            onStartTimer={handleStartTimer}
+            onPauseTimer={handlePauseTimer}
+            onResetTimer={handleResetTimer}
           />
         ) : (
           <View>
@@ -142,13 +121,22 @@ export default function GamePlayerPage() {
           </View>
         )}
       </View>
-      
-      {/* Modal de pausa */}
+      {/* TimerBar SIEMPRE visible al final del layout */}
+      <View style={styles.timerBarWrapper}>
+        <TimerBar
+          key={timerKey}
+          isPaused={timerPaused || isPaused || isGameOver}
+          isGameOver={isGameOver}
+          score={score}
+          onTimeOut={handleTimeOut}
+        />
+      </View>
+      {/* Pause Modal */}
       <Modal visible={isPaused} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Pausa</Text>
-            <Pressable style={styles.modalButton} onPress={() => setIsPaused(false)}>
+            <Pressable style={styles.modalButton} onPress={handleResume}>
               <Ionicons name="play" size={24} color="#fff" />
               <Text style={styles.modalButtonText}>Reanudar</Text>
             </Pressable>
@@ -160,7 +148,7 @@ export default function GamePlayerPage() {
         </View>
       </Modal>
 
-      {/* Modal de fin de juego con dos botones */}
+      {/* Game Over Modal */}
       <Modal visible={isGameOver} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -182,15 +170,8 @@ export default function GamePlayerPage() {
   );
 }
 
+// --- Styles ---
 const styles = StyleSheet.create({
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    width: '100%',
-  },
   topBarNoBack: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -199,24 +180,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     width: '100%',
     marginTop: 10,
-  },
-  timerWrapper: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 5,
-  },
-  timerContainer: {
-    height: 14,
-    width: '80%',
-    backgroundColor: '#e0d7f8',
-    borderRadius: 7,
-    marginVertical: 0,
-    overflow: 'hidden',
-  },
-  timerBar: {
-    height: '100%',
-    backgroundColor: '#723FEB',
-    borderRadius: 7,
   },
   iconButton: {
     padding: 8,
@@ -240,12 +203,6 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  statusText: {
-    fontSize: 22,
-    fontFamily: 'RobotoSlab_700Bold',
-    color: '#723FEB',
-    letterSpacing: 1,
   },
   statusTextEnhanced: {
     fontSize: 26,
@@ -315,5 +272,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 10,
-  }
+  },
+  timerBarWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    paddingBottom: 50,
+  },
 });
