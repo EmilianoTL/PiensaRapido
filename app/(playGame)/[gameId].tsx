@@ -5,10 +5,12 @@ import Screen from '@components/Screen';
 import LightSequenceGame from '@components/Games/LightSequence';
 import TimerBar from '@components/TimeBar';
 import { Ionicons } from '@expo/vector-icons';
+import MoreLessNumber from '@components/Games/MoreLessNumber';
 
 // --- Game Component Mapping ---
 const GAME_COMPONENTS: Record<string, React.ElementType> = {
   '101': LightSequenceGame,
+  '401': MoreLessNumber,
   // Future games will be added here
 };
 

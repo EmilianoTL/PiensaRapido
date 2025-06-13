@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function CalculoM() {
+const MoreLessNumber = () => {
   const router = useRouter();
 
   return (
@@ -114,3 +114,5 @@ const styles = StyleSheet.create({
   //   marginTop: 16,
   // },
 });
+
+export default MoreLessNumber;
