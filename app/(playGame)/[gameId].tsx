@@ -19,7 +19,7 @@ const GAME_COMPONENTS: Record<string, React.ElementType> = {
 export default function GamePlayerPage() {
   // --- Hooks ---
   const router = useRouter();
-  const { gameId, mode = 'oneGame' } = useLocalSearchParams<{ gameId: string; mode: 'oneGame' | 'multipleGames' | 'allGames' }>();
+  const { gameId, mode = 'oneGame', tipo } = useLocalSearchParams<{ gameId: string; mode: 'oneGame' | 'multipleGames' | 'allGames'; tipo: string }>();
   const gameRef = useRef<{ restart: () => void; forceGameOver: () => void }>(null);
 
   // --- State Management ---
@@ -84,8 +84,26 @@ export default function GamePlayerPage() {
     setTimerPaused(true); // Pausada y llena
   }, []);
 
-
   // --- Render Logic ---
+  if (mode === 'multipleGames' || mode === 'allGames') {
+    return (
+      <Screen>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
+          <Text style={{ fontSize: 22, color: '#6200ea', textAlign: 'center', marginBottom: 20 }}>
+            Esta función estará disponible en una versión futura.
+          </Text>
+          <Pressable
+            style={{ backgroundColor: '#6200ea', borderRadius: 20, paddingVertical: 12, paddingHorizontal: 30 }}
+            onPress={() => router.back()}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Volver</Text>
+          </Pressable>
+        </View>
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
       <Stack.Screen options={{ headerShown: false }} />

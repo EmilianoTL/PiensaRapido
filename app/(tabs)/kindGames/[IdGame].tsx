@@ -56,7 +56,7 @@ export default function KindGamePage() {
       </View>
       <View style={styles.playButtonWrapper}>
         <Link
-          href={{ pathname: '/(playGame)/multipleGames', params: { tipo: gameType } }}
+          href={{ pathname: '/(playGame)/gameId', params: { mode: 'multipleGames', tipo: gameType } }}
           asChild
         >
           <Pressable style={styles.playButton}>
