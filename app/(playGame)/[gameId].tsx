@@ -24,7 +24,6 @@ export default function GamePlayerPage() {
   const [score, setScore] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [statusText, setStatusText] = useState('');
   const [timerPaused, setTimerPaused] = useState(true);
   const [timerKey, setTimerKey] = useState(0);
 
@@ -98,10 +97,6 @@ export default function GamePlayerPage() {
           <Ionicons name="pause" size={32} color="#3e2d6b" />
         </Pressable>
       </View>
-      {/* Status Text */}
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusTextEnhanced}>{statusText}</Text>
-      </View>
       {/* Game Area */}
       <View style={styles.gameArea}>
         {GameComponent ? (
@@ -109,7 +104,6 @@ export default function GamePlayerPage() {
             ref={gameRef}
             isPaused={isPaused || isGameOver}
             onScoreChange={setScore}
-            setStatusText={setStatusText}
             onGameOver={handleGameOver}
             onStartTimer={handleStartTimer}
             onPauseTimer={handlePauseTimer}
@@ -198,22 +192,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3e2d6b',
     marginLeft: 8,
-  },
-  statusContainer: {
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statusTextEnhanced: {
-    fontSize: 26,
-    fontFamily: 'RobotoSlab_900Black',
-    color: '#3e2d6b',
-    letterSpacing: 1.5,
-    textShadowColor: '#e0d7f8',
-    textShadowOffset: { width: 1, height: 2 },
-    textShadowRadius: 4,
-    marginVertical: 10,
-    textAlign: 'center',
   },
   gameArea: {
     flex: 1,

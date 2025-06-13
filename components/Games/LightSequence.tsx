@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 
 const COLORS = {
   red: { base: '#e74c3c', shadow: '#c0392b' },
@@ -12,7 +12,6 @@ const COLOR_KEYS = ['red', 'green', 'blue', 'yellow'];
 interface LightSequenceProps {
   isPaused: boolean;
   onScoreChange: (newScore: number) => void;
-  setStatusText: (text: string) => void;
   onGameOver: () => void;
   onStartTimer: () => void;
   onPauseTimer: () => void;
@@ -20,7 +19,7 @@ interface LightSequenceProps {
 }
 
 const LightSequence = forwardRef((props: LightSequenceProps, ref) => {
-  const { isPaused, onScoreChange, setStatusText, onGameOver, onStartTimer, onPauseTimer, onResetTimer } = props;
+  const { isPaused, onScoreChange, onGameOver, onStartTimer, onPauseTimer, onResetTimer } = props;
 
   const [sequence, setSequence] = useState<number[]>([]);
   const [playerSequence, setPlayerSequence] = useState<number[]>([]);
@@ -30,6 +29,7 @@ const LightSequence = forwardRef((props: LightSequenceProps, ref) => {
   const sequenceIndexRef = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isShowingSequence, setIsShowingSequence] = useState(false);
+  const [statusText, setStatusText] = useState('');
 
   useImperativeHandle(ref, () => ({
     restart() {
@@ -167,13 +167,14 @@ const LightSequence = forwardRef((props: LightSequenceProps, ref) => {
   // Renderiza el tablero, pero si isPaused, deshabilita todos los botones
   return (
     <View style={styles.gameBoard}>
+      <Text style={styles.statusTextEnhanced}>{statusText}</Text>
       {COLOR_KEYS.map((key, index) => {
         const color = COLORS[key as keyof typeof COLORS];
         const isActive = activeButton === index;
         return (
           <View key={index} style={styles.buttonWrapper}>
             <Pressable
-              disabled={phase !== 'playing' || isPaused}
+              disabled={phase !== 'playing' || props.isPaused}
               onPress={() => handlePlayerPress(index)}
               style={({ pressed }) => [
                 styles.gameButton,
@@ -229,7 +230,23 @@ const styles = StyleSheet.create({
     transform: [{ translateY: 2 }],
     borderBottomWidth: 4,
     elevation: 2,
-  }
+  },
+  statusTextEnhanced: {
+    position: 'absolute',
+    top: -100,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    padding: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
 });
 
 export default LightSequence;
