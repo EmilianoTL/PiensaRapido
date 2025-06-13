@@ -90,25 +90,41 @@ export default function GamePlayerPage() {
     }
   };
 
+  const handleExit = () => {
+    setIsGameOver(false);
+    router.back();
+  };
+
   return (
     <Screen>
       <Stack.Screen options={{ headerShown: false }} />
-      
-      <View style={styles.topBar}>
-        <Pressable onPress={() => router.back()} style={styles.iconButton}>
-            <Ionicons name="arrow-back" size={32} color="#3e2d6b" />
-        </Pressable>
+
+      {/* Barra de tiempo centrada y en la parte superior */}
+      <View style={styles.timerWrapper}>
+        <View style={styles.timerContainer}>
+          <Animated.View style={[styles.timerBar, {
+            width: timerAnimation.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '100%'],
+            })
+          }]} />
+        </View>
+      </View>
+
+      {/* Barra superior sin botón de retorno */}
+      <View style={styles.topBarNoBack}>
         <View style={styles.scoreContainer}>
-            <Ionicons name="star" size={24} color="#FDD835" />
-            <Text style={styles.scoreText}>{score}</Text>
+          <Ionicons name="star" size={24} color="#FDD835" />
+          <Text style={styles.scoreText}>{score}</Text>
         </View>
         <Pressable onPress={() => setIsPaused(true)} style={styles.iconButton}>
-            <Ionicons name="pause" size={32} color="#3e2d6b" />
+          <Ionicons name="pause" size={32} color="#3e2d6b" />
         </Pressable>
       </View>
 
+      {/* Texto de estado mejorado */}
       <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>{statusText}</Text>
+        <Text style={styles.statusTextEnhanced}>{statusText}</Text>
       </View>
 
       <View style={styles.gameArea}>
@@ -116,7 +132,7 @@ export default function GamePlayerPage() {
           <GameComponent
             ref={gameRef}
             isPaused={isPaused || isGameOver}
-            gameState={currentGameState} // <-- CAMBIO CLAVE: Pasamos el estado al componente
+            gameState={currentGameState}
             onScoreChange={setScore}
             onStateChange={setCurrentGameState}
           />
@@ -127,41 +143,38 @@ export default function GamePlayerPage() {
         )}
       </View>
       
-      <View style={styles.timerContainer}>
-        <Animated.View style={[styles.timerBar, {
-          width: timerAnimation.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0%', '100%'],
-          })
-        }]} />
-      </View>
-
+      {/* Modal de pausa */}
       <Modal visible={isPaused} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Pausa</Text>
-                <Pressable style={styles.modalButton} onPress={() => setIsPaused(false)}>
-                    <Ionicons name="play" size={24} color="#fff" />
-                    <Text style={styles.modalButtonText}>Reanudar</Text>
-                </Pressable>
-                <Pressable style={[styles.modalButton, styles.quitButton]} onPress={() => router.back()}>
-                    <Ionicons name="exit-outline" size={24} color="#fff" />
-                    <Text style={styles.modalButtonText}>Salir</Text>
-                </Pressable>
-            </View>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Pausa</Text>
+            <Pressable style={styles.modalButton} onPress={() => setIsPaused(false)}>
+              <Ionicons name="play" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Reanudar</Text>
+            </Pressable>
+            <Pressable style={[styles.modalButton, styles.quitButton]} onPress={() => router.back()}>
+              <Ionicons name="exit-outline" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Salir</Text>
+            </Pressable>
+          </View>
         </View>
       </Modal>
 
+      {/* Modal de fin de juego con dos botones */}
       <Modal visible={isGameOver} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>¡Juego Terminado!</Text>
-                 <Text style={styles.finalScoreText}>Puntuación Final: {score}</Text>
-                <Pressable style={styles.modalButton} onPress={handleFinalAction}>
-                    <Ionicons name={mode === 'oneGame' ? 'refresh' : 'arrow-back'} size={24} color="#fff" />
-                    <Text style={styles.modalButtonText}>{mode === 'oneGame' ? 'Jugar de Nuevo' : 'Continuar'}</Text>
-                </Pressable>
-            </View>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>¡Juego Terminado!</Text>
+            <Text style={styles.finalScoreText}>Puntuación Final: {score}</Text>
+            <Pressable style={styles.modalButton} onPress={handleFinalAction}>
+              <Ionicons name="refresh" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Jugar de Nuevo</Text>
+            </Pressable>
+            <Pressable style={[styles.modalButton, styles.quitButton]} onPress={handleExit}>
+              <Ionicons name="exit-outline" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Salir</Text>
+            </Pressable>
+          </View>
         </View>
       </Modal>
 
@@ -177,6 +190,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     width: '100%',
+  },
+  topBarNoBack: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    width: '100%',
+    marginTop: 10,
+  },
+  timerWrapper: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  timerContainer: {
+    height: 14,
+    width: '80%',
+    backgroundColor: '#e0d7f8',
+    borderRadius: 7,
+    marginVertical: 0,
+    overflow: 'hidden',
+  },
+  timerBar: {
+    height: '100%',
+    backgroundColor: '#723FEB',
+    borderRadius: 7,
   },
   iconButton: {
     padding: 8,
@@ -207,6 +247,17 @@ const styles = StyleSheet.create({
     color: '#723FEB',
     letterSpacing: 1,
   },
+  statusTextEnhanced: {
+    fontSize: 26,
+    fontFamily: 'RobotoSlab_900Black',
+    color: '#3e2d6b',
+    letterSpacing: 1.5,
+    textShadowColor: '#e0d7f8',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 4,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
   gameArea: {
     flex: 1,
     justifyContent: 'center',
@@ -217,18 +268,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#6200ea',
-  },
-  timerContainer: {
-    height: 12,
-    width: '80%',
-    backgroundColor: '#e0d7f8',
-    borderRadius: 6,
-    marginVertical: 20,
-  },
-  timerBar: {
-    height: '100%',
-    backgroundColor: '#723FEB',
-    borderRadius: 6,
   },
   modalOverlay: {
     flex: 1,
