@@ -2,7 +2,7 @@
   "memoria": [
     { "id": 101, "nombre": "Secuencia de luces", "descripcion": "Repite la secuencia de luces que se muestra." },
     { "id": 102, "nombre": "Secuencia de números", "descripcion": "Repite la secuencia de números que se muestra." },
-    { "id": 103, "nombre": "Secuencia de palabras", "descripcion": "Repite la secuencia de palabras que se muestra." },
+    { "id": 103, "nombre": "Otro juego", "descripcion": "Memoriza y repite la secuencia de colores y sonidos. ¡La secuencia se hará más larga y rápida con cada ronda!" },   
     { "id": 104, "nombre": "Secuencia de colores", "descripcion": "Repite la secuencia de colores que se muestra." },
     { "id": 105, "nombre": "Secuencia de sonidos", "descripcion": "Repite la secuencia de sonidos que se muestra." },
     { "id": 106, "nombre": "Secuencia de imágenes", "descripcion": "Repite la secuencia de imágenes que se muestra." },

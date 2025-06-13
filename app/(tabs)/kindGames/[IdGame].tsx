@@ -56,7 +56,7 @@ export default function KindGamePage() {
       </View>
       <View style={styles.playButtonWrapper}>
         <Link
-          href={{ pathname: '/(playGame)/multipleGames', params: { tipo: gameType } }}
+          href={{ pathname: '/(playGame)/gameId', params: { mode: 'multipleGames', tipo: gameType } }}
           asChild
         >
           <Pressable style={styles.playButton}>
@@ -71,9 +71,13 @@ export default function KindGamePage() {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 16 }}
         renderItem={({ item }) => {
           const isBlocked = item.id % 100 === 99;
+          
+          // La ruta ahora es dinámica y se construye con el ID del item
+          const gamePath = `/(playGame)/${item.id}`;
+
           return !isBlocked ? (
             <Link
-              href={{ pathname: '/(playGame)/oneGame', params: { tipo: gameType, id: item.id } }}
+              href={{ pathname: gamePath, params: { mode: 'oneGame' } }} // Pasa parámetros adicionales aquí
               asChild
             >
               <GameCard

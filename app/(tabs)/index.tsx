@@ -76,7 +76,7 @@ export default function Game() {
           </Link>
         </View>
         <View style={styles.centerCircleWrapper}>
-          <Link href="../(playGame)/allGames" asChild>
+          <Link href={{ pathname: '/(playGame)/gameId', params: { mode: 'allGames' } }} asChild>
             <AnimatedPressable style={styles.centerCircle}>
               <Text style={styles.playButtonText}>Jugar</Text>
             </AnimatedPressable>
