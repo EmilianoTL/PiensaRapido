@@ -1,0 +1,18 @@
+{
+    "progreso":{
+        "memoria":0,
+        "atencion":0,
+        "razonamiento":0,
+        "calculo":0
+    }, 
+    "Racha":{
+        "currentday":"",
+        "lunes":"",
+        "martes":"",
+        "miercoles":"",
+        "jueves":"",
+        "viernes":"",
+        "sabado":"",
+        "domingo":"" 
+    }
+}
