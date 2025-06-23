@@ -65,8 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoButton: {
-    marginLeft: 16,
-    padding: 4,
+    paddingTop:15
   },
   blockedOverlay: {
     ...StyleSheet.absoluteFillObject,
