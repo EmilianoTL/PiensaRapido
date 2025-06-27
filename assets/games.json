@@ -19,6 +19,8 @@
   ],
   "calculo": [
     { "id": 401, "nombre": "¿Número mayor o menor?", "descripcion": "Indica si el número mostrado es mayor o menor que el anterior." },
+    { "id": 402, "nombre": "Suma rápida", "descripcion": "Responde rápidamente si la suma es correcta o no." },
+
     { "id": 499, "nombre": "Proximamente", "descripcion": "Se agregaran más juegos en el futuro." }
   ]
 }

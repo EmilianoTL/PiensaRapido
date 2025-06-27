@@ -7,6 +7,7 @@ import TimerBar from '@components/TimeBar';
 import { Ionicons } from '@expo/vector-icons';
 import MoreLessNumber from '@components/Games/MoreLessNumber';
 import Sopa from '@components/Games/Sopa';
+import SumaFast from '@components/Games/SumaFast';
 
 
 // --- Game Component Mapping ---
@@ -14,6 +15,7 @@ const GAME_COMPONENTS: Record<string, React.ElementType> = {
   '101': LightSequenceGame,
   '401': MoreLessNumber,
   '301': Sopa,
+  '402': SumaFast,
   // Future games will be added here
 };
 
